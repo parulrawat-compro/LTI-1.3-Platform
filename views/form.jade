@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title= title
+  body
+    form#ltiForm(name='ltiForm', action= action, method= method)
+      each val,key in initiateLoginParams
+        input(name= key, value= val, type="hidden")
+      button(name= submit, value= submit, type="hidden")
+    script.
+      document.getElementById("ltiForm").submit();

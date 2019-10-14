@@ -1,0 +1,11 @@
+[{
+    "id": "tool1002",
+    "client_id": "4001",
+    "deployment_id": "1",
+    "lti_version": "1.3",
+    "tool_url": "https://lti-ri.imsglobal.org/lti/tools/537/launches",
+    "initiate_login_uri": "https://lti-ri.imsglobal.org/lti/tools/537/login_initiations",
+    "redirect_uris": [
+        "https://lti-ri.imsglobal.org/lti/tools/537/launches"
+    ]
+}]

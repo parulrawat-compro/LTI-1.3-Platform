@@ -1,4 +1,5 @@
-[{
+[
+    {
     "id": "tool1002",
     "client_id": "4001",
     "deployment_id": "1",
@@ -8,4 +9,5 @@
     "redirect_uris": [
         "https://lti-ri.imsglobal.org/lti/tools/537/launches"
     ]
-}]
+    }
+]

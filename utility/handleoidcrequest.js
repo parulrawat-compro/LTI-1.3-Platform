@@ -1,12 +1,22 @@
-const registered_tool = require('../registered_data/registered_tool.json');
+const registered_tool = require('../registered_data/tool.json');
 const keys = require('../registered_data/keys.json');
+const jwk_keys = require('../registered_data/jwk.json')
 const jwt = require('jsonwebtoken');
 
 function handleOIDCQueryParam(queryParams){
-    
+    debugger
     // Verify OIDC auth request 
     let tool = validateAuthRequest(queryParams);
-    return createAuthResponse(queryParams, tool);
+    
+    const authPrams =  createAuthResponse(queryParams, tool);
+    const id_token = createIDToken(authPrams);
+
+    return {
+        id_token: id_token,
+        state: authParams.state,
+        action: authParams.redirect_uri
+    }
+
 }
 
 function validateAuthRequest(params) {
@@ -24,8 +34,7 @@ function validateAuthRequest(params) {
         prompt
     } = params;
 
-    /****************************** VALIDATE MANDATORY PARAMS ARE PRESENT ******************************/
-    // Ref - https://www.imsglobal.org/spec/security/v1p0/#step-2-authentication-request
+    // VALIDATE MANDATORY PARAMS ARE PRESENT 
     {
 
         if (!scope) {
@@ -61,8 +70,7 @@ function validateAuthRequest(params) {
         }
     }
 
-    /****************************** VALIDATE FIXED PARAMETERS ******************************/
-    // Ref - https://www.imsglobal.org/spec/security/v1p0/#step-2-authentication-request
+    // VALIDATE FIXED PARAMETERS
 
    {
        if (scope !== 'openid') {
@@ -80,13 +88,9 @@ function validateAuthRequest(params) {
        if (prompt !== 'none') {
            throw new Error('Bad request - invalid "prompt", must have value "id_token"');
        }
-
-       // TODO - verify lit_message_hint ? 
-       // Ref - https://github.com/moodle/moodle/blob/master/mod/lti/auth.php#L55
    }
 
-   /****************************** VALIDATE redirect_uri ******************************/
-    // Validate the redirect_uri as a valid end point for the client_id, and 
+   // VALIDATE redirect_uri
     {
         let tool;
         registered_tool.forEach((item) => {
@@ -105,14 +109,6 @@ function validateAuthRequest(params) {
 
         return tool;
     }
-    //
-
-    /****************************** VALIDATE login_hint ******************************/
-    // Validate the current logged in user matches the login_hint
-    {
-        // TODO
-    }
-
     
 }
 
@@ -131,8 +127,8 @@ function createAuthResponse (queryParams, tool) {
         prompt
     } = queryParams;
 
-    const currentTime = parseInt(Date.now()/1000); //convert ms to sec
-    const expirationWindow = 60*10 //10mins
+    const currentTime = parseInt(Date.now()/1000);
+    const expirationWindow = 60*10;
     
     const expirationTIme = currentTime + expirationWindow;
 
@@ -146,26 +142,21 @@ function createAuthResponse (queryParams, tool) {
         nonce: nonce,
         'https://purl.imsglobal.org/spec/lti/claim/message_type': 'LtiResourceLinkRequest',
         'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
-        //should be within the json of tool details
+
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id': tool.deployment_id,
         //same as OIDC third party initiated login request
         'https://purl.imsglobal.org/spec/lti/claim/target_link_uri': tool.initiate_login_uri,
         'https://purl.imsglobal.org/spec/lti/claim/resource_link': { id: 'course_1', title: 'course for 10th standard'}
 
     }
-        
 
-    const id_token = createIDToken(authPrams);
-
-    return {
-        id_token: id_token,
-        state: state,
-        action: redirect_uri
-    }
+    return authPrams;
 }
 
 function createIDToken (authPrams) {
-    return jwt.sign(authPrams, keys.private_key, { algorithm: 'RS256', keyid:"eb611f26-46df-4eeb-ab8e-1d11896b456b" });
+    //signing
+    //hard coded key
+    return jwt.sign(authPrams, keys.private_key, { algorithm: 'RS256', keyid: jwk_keys.keys[0].kid });
 }
 
 module.exports = {

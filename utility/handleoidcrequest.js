@@ -1,22 +1,12 @@
 const registered_tool = require('../registered_data/tool.json');
 const keys = require('../registered_data/keys.json');
-const jwk_keys = require('../registered_data/jwk.json')
 const jwt = require('jsonwebtoken');
 
 function handleOIDCQueryParam(queryParams){
-    debugger
+    
     // Verify OIDC auth request 
     let tool = validateAuthRequest(queryParams);
-    
-    const authPrams =  createAuthResponse(queryParams, tool);
-    const id_token = createIDToken(authPrams);
-
-    return {
-        id_token: id_token,
-        state: authParams.state,
-        action: authParams.redirect_uri
-    }
-
+    return createAuthResponse(queryParams, tool);
 }
 
 function validateAuthRequest(params) {
@@ -128,7 +118,7 @@ function createAuthResponse (queryParams, tool) {
     } = queryParams;
 
     const currentTime = parseInt(Date.now()/1000);
-    const expirationWindow = 60*10;
+    const expirationWindow = 60*10
     
     const expirationTIme = currentTime + expirationWindow;
 
@@ -149,14 +139,19 @@ function createAuthResponse (queryParams, tool) {
         'https://purl.imsglobal.org/spec/lti/claim/resource_link': { id: 'course_1', title: 'course for 10th standard'}
 
     }
+        
 
-    return authPrams;
+    const id_token = createIDToken(authPrams);
+
+    return {
+        id_token: id_token,
+        state: state,
+        action: redirect_uri
+    }
 }
 
 function createIDToken (authPrams) {
-    //signing
-    //hard coded key
-    return jwt.sign(authPrams, keys.private_key, { algorithm: 'RS256', keyid: jwk_keys.keys[0].kid });
+    return jwt.sign(authPrams, keys.private_key, { algorithm: 'RS256', keyid:"eb611f26-46df-4eeb-ab8e-1d11896b456b" });
 }
 
 module.exports = {

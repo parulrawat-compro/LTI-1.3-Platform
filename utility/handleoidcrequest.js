@@ -137,7 +137,7 @@ function createAuthResponse (queryParams, tool) {
     const expirationTIme = currentTime + expirationWindow;
 
     let authPrams = {
-        iss: 'https://localhost:3000',
+        iss: 'https://lti-1-3-platform.herokuapp.com/',
         aud: tool.client_id,
         iat: currentTime,
         exp: expirationTIme,

@@ -10,7 +10,7 @@ router.get('/', function (req, res, next) {
   }
 
   var initiateLoginParams = {
-    iss: 'https://localhost:3000',
+    iss: 'https://lti-1-3-platform.herokuapp.com/',
     client_id: 987654321,
     target_link_uri: 'https://lti-ri.imsglobal.org/lti/tools/537/launches',
     login_hint: '9',

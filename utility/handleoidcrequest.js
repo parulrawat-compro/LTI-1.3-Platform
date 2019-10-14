@@ -2,8 +2,8 @@ const registered_tool = require('../registered_data/tool.json');
 const keys = require('../registered_data/keys.json');
 const jwt = require('jsonwebtoken');
 
-function handleOIDCQueryParam(queryParams){
-    
+function handleOIDCQueryParam(queryParams) {
+
     // Verify OIDC auth request 
     let tool = validateAuthRequest(queryParams);
     return createAuthResponse(queryParams, tool);
@@ -17,8 +17,6 @@ function validateAuthRequest(params) {
         client_id,
         redirect_uri,
         login_hint,
-        lti_message_hint,
-        state,
         response_mode,
         nonce,
         prompt
@@ -62,25 +60,25 @@ function validateAuthRequest(params) {
 
     // VALIDATE FIXED PARAMETERS
 
-   {
-       if (scope !== 'openid') {
-           throw new Error('Bad request - invalid "scope", must be "openid"');
-       }
+    {
+        if (scope !== 'openid') {
+            throw new Error('Bad request - invalid "scope", must be "openid"');
+        }
 
-       if (response_type !== 'id_token') {
-           throw new Error('Bad request - invalid "response_type", must have value "id_token"');
-       }
+        if (response_type !== 'id_token') {
+            throw new Error('Bad request - invalid "response_type", must have value "id_token"');
+        }
 
-       if (response_mode !== 'form_post') {
-           throw new Error('Bad request - invalid "response_mode", must have value "form_post"');
-       }
+        if (response_mode !== 'form_post') {
+            throw new Error('Bad request - invalid "response_mode", must have value "form_post"');
+        }
 
-       if (prompt !== 'none') {
-           throw new Error('Bad request - invalid "prompt", must have value "id_token"');
-       }
-   }
+        if (prompt !== 'none') {
+            throw new Error('Bad request - invalid "prompt", must have value "id_token"');
+        }
+    }
 
-   // VALIDATE redirect_uri
+    // VALIDATE redirect_uri
     {
         let tool;
         registered_tool.forEach((item) => {
@@ -99,27 +97,21 @@ function validateAuthRequest(params) {
 
         return tool;
     }
-    
+
 }
 
-function createAuthResponse (queryParams, tool) {
+function createAuthResponse(queryParams, tool) {
 
     const {
-        scope,
-        response_type,
-        client_id,
         redirect_uri,
         login_hint,
-        lti_message_hint,
         state,
-        response_mode,
         nonce,
-        prompt
     } = queryParams;
 
-    const currentTime = parseInt(Date.now()/1000);
-    const expirationWindow = 60*10
-    
+    const currentTime = parseInt(Date.now() / 1000);
+    const expirationWindow = 60 * 10;
+
     const expirationTIme = currentTime + expirationWindow;
 
     let authPrams = {
@@ -136,10 +128,12 @@ function createAuthResponse (queryParams, tool) {
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id': tool.deployment_id,
         //same as OIDC third party initiated login request
         'https://purl.imsglobal.org/spec/lti/claim/target_link_uri': tool.initiate_login_uri,
-        'https://purl.imsglobal.org/spec/lti/claim/resource_link': { id: 'course_1', title: 'course for 10th standard'}
+        'https://purl.imsglobal.org/spec/lti/claim/resource_link': {
+            id: 'course_1',
+            title: 'course for 10th standard'
+        }
 
     }
-        
 
     const id_token = createIDToken(authPrams);
 
@@ -150,8 +144,11 @@ function createAuthResponse (queryParams, tool) {
     }
 }
 
-function createIDToken (authPrams) {
-    return jwt.sign(authPrams, keys.private_key, { algorithm: 'RS256', keyid:"eb611f26-46df-4eeb-ab8e-1d11896b456b" });
+function createIDToken(authPrams) {
+    return jwt.sign(authPrams, keys.private_key, {
+        algorithm: 'RS256',
+        keyid: "eb611f26-46df-4eeb-ab8e-1d11896b456b"
+    });
 }
 
 module.exports = {

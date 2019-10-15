@@ -10,9 +10,9 @@ router.get('/', function (req, res, next) {
   }
 
   var initiateLoginParams = {
-    iss: 'https://lti-1-3-platform.herokuapp.com/',
+    iss: 'https://lti-ri.imsglobal.org',
     client_id: 987654321,
-    target_link_uri: 'https://lti-ri.imsglobal.org/lti/tools/537/launches',
+    target_link_uri: 'https://secure-sea-62530.herokuapp.com/submit',
     login_hint: '9',
     lti_message_hint: '377'
   }
@@ -20,7 +20,7 @@ router.get('/', function (req, res, next) {
   res.render('form.jade', {
     title: 'Initiating OIDC login ',
     initiateLoginParams: initiateLoginParams,
-    action: 'https://lti-ri.imsglobal.org/lti/tools/537/login_initiations',
+    action: 'https://secure-sea-62530.herokuapp.com/oidc',
     method: 'POST'
   });
 

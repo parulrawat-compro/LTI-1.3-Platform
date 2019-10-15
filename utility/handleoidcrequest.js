@@ -22,7 +22,7 @@ function validateAuthRequest(params) {
         prompt
     } = params;
 
-    // VALIDATE MANDATORY PARAMS ARE PRESENT 
+    // MANDATORY PARAMS
     {
 
         if (!scope) {
@@ -58,7 +58,7 @@ function validateAuthRequest(params) {
         }
     }
 
-    // VALIDATE FIXED PARAMETERS
+    // FIXED PARAMETERS
 
     {
         if (scope !== 'openid') {
@@ -78,7 +78,7 @@ function validateAuthRequest(params) {
         }
     }
 
-    // VALIDATE redirect_uri
+    // redirect_uri and client id
     {
         let tool;
         registered_tool.forEach((item) => {
@@ -110,12 +110,11 @@ function createAuthResponse(queryParams, tool) {
     } = queryParams;
 
     const currentTime = parseInt(Date.now() / 1000);
-    const expirationWindow = 60 * 10;
 
-    const expirationTIme = currentTime + expirationWindow;
+    const expirationTIme = currentTime + 300; //5 mins expiration time
 
     let authPrams = {
-        iss: 'https://lti-1-3-platform.herokuapp.com/',
+        iss: 'https://lti-ri.imsglobal.org',
         aud: tool.client_id,
         iat: currentTime,
         exp: expirationTIme,

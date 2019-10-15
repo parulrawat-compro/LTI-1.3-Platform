@@ -1,13 +1,13 @@
 [
     {
     "id": "tool1002",
-    "client_id": "4001",
+    "client_id": "testClient",
     "deployment_id": "1",
     "lti_version": "1.3",
-    "tool_url": "https://lti-ri.imsglobal.org/lti/tools/537/launches",
-    "initiate_login_uri": "https://lti-ri.imsglobal.org/lti/tools/537/login_initiations",
+    "tool_url": "https://secure-sea-62530.herokuapp.com/submit",
+    "initiate_login_uri": "https://secure-sea-62530.herokuapp.com/oidc",
     "redirect_uris": [
-        "https://lti-ri.imsglobal.org/lti/tools/537/launches"
+        "https://secure-sea-62530.herokuapp.com/submit"
     ]
     }
 ]
